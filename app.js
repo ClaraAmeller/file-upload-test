@@ -1,5 +1,6 @@
 'use strict';
 
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const logger = require('morgan');
@@ -7,10 +8,19 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+
 // Require routes
 const index = require('./routes/index');
 
 const app = express();
+
+// Mongoose connection
+mongoose.Promise = Promise;
+mongoose.connect(process.env.MONGODB_URI, {
+    keepAlive: true,
+    reconnectTries: Number.MAX_VALUE,
+    useMongoClient: true
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,13 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Use routes
 app.use('/', index);
 
-// Mongoose connection
-mongoose.Promise = Promise;
-mongoose.connect('mongodb://localhost/lab-express-file-upload', {
-    keepAlive: true,
-    reconnectTries: Number.MAX_VALUE,
-    useMongoClient: true
-});
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
