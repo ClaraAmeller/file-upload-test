@@ -8,14 +8,21 @@ const upload = multer({
     dest: './public/uploads/'
 });
 
-/* GET home page. */
-router.get('/', (req, res) => {
-    res.render('index');
+/* GET home page showing pictures */
+router.get('/', (req, res, next) => {
+    Picture.find({}, (err, pictures) => { // Find everything
+        if (err) {
+            next(err);
+        } else {
+            const data = {
+                pictures: pictures
+            };
+            res.render('index', data);
+        }
+    });
 });
 
-// Route to upload from project base path
-
-/* POST File with Multer */
+/* POST file with Multer */
 router.post('/upload', upload.single('photo'), (req, res, next) => {
     const pic = new Picture({
         name: req.body.name,
